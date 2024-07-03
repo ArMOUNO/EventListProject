@@ -10,8 +10,13 @@ import {
   Th,
   Thead,
   Tr,
-  Box,
+  Box,Input,
+  InputGroup,
+  InputRightElement,
+  Flex,
+  
 } from "@chakra-ui/react";
+import { SearchIcon } from "@chakra-ui/icons";
 import React, { useEffect, useState } from "react";
 import CreateEventModul from "./CreateEventModul";
 
@@ -41,7 +46,13 @@ const EventsPage = () => {
     <div>
       <Heading>List of events</Heading>
       <div style={{ padding: "20vh" }}>
-        <Button
+        <div>
+          
+        </div>
+        
+         <Flex >
+         <Flex mr={"1"}>
+         <Button
           onClick={() => setEventModal(true)}
           bg="green.500"
           color="white"
@@ -50,6 +61,18 @@ const EventsPage = () => {
         >
           Add Event
         </Button>
+         </Flex>
+        {/* Searchbar */}
+         <InputGroup width="300px">
+            <Input
+              placeholder="Search..."
+             
+             />
+            <InputRightElement marginLeft={"2"} pointerEvents="none">
+              <SearchIcon color="gray.300" />
+            </InputRightElement>
+          </InputGroup>
+         </Flex>
         <TableContainer style={{ border: "1px solid black" }}>
           <Table variant="striped" colorScheme="teal">
             <Thead>
