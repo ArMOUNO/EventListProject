@@ -40,7 +40,7 @@ const EventPage = () => {
       const response = await fetch(`http://localhost:3000/events/${eventId}`);
       const data = await response.json();
       setEvent(data);
-      // setValue({ ...data });
+      reset(data);
     } catch (error) {
       console.error("Error fetching event details:", error);
     }
@@ -58,13 +58,14 @@ const EventPage = () => {
 
   useEffect(() => {
     fetchEvent();
-    fetchCategories();
-  
   }, [eventId]);
 
-  if (!event.title) {
-    return <div>Loading...</div>;
-  }
+  const handleEdit = async () => {
+    await fetchCategories();
+    setIsEditOpen(true);
+    setValue('categoryIds', event.categoryIds.join(', '));
+    
+  };
 
   const handleDelete = async () => {
     try {
@@ -98,6 +99,8 @@ const EventPage = () => {
 
   const onSubmit = async (data) => {
     try {
+      const updatedCategoryIds = typeof data.categoryIds === 'string' ? data.categoryIds.split(',').map(id => id.trim()) : data.categoryIds;
+      data.categoryIds = updatedCategoryIds;
       const response = await fetch(`http://localhost:3000/events/${eventId}`, {
         method: "PUT",
         headers: {
@@ -115,7 +118,7 @@ const EventPage = () => {
           duration: 3000,
           isClosable: true,
         });
-        navigate("/");
+       navigate(`/event/${eventId}`)
         setEvent(updatedEvent);
         setIsEditOpen(false);
         reset(); 
@@ -176,7 +179,7 @@ const EventPage = () => {
         </VStack>
 
         <Flex justify="center" align="center">
-          <EditButtonReuse onEdit={() => setIsEditOpen(true)} />
+          <EditButtonReuse onEdit={handleEdit} />
           <Box mx={"1"} my={"6"} />
           <DeleteButtonReuse onClick={() => setIsModalOpen(true)} />
           {isModalOpen && (

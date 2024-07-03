@@ -13,61 +13,39 @@
   ],
   "events": [
     {
-      "categoryIds": [
-        "2"
-      ],
-      "description": "ss",
-      "id": "1"
-    },
-    {
-      "categoryIds": [
-        "2"
-      ],
-      "description": "ddd",
-      "id": "2"
-    },
-    {
       "id": "3",
       "createdBy": 2,
-      "title": "Badminton game",
-      "description": "Hit that shuttle!",
+      "title": "Badminton",
+      "description": "Hit that",
       "image": "https://wincacademy.github.io/webpages/media/pexels-vladvictoria-2202685.jpg",
       "categoryIds": [
-        1,
-        2
+        "3"
       ],
       "location": "The Park",
-      "startTime": "2023-03-15T12:00:00.000Z",
-      "endTime": "2023-03-15T13:30:00.000Z"
+      "startTime": "2024-07-03T16:10",
+      "endTime": "2024-07-03T16:10"
     },
     {
       "id": "4",
       "createdBy": 2,
-      "title": "Yoga",
+      "title": "Yogadddd",
       "description": "It's a bit of a stretch.",
       "image": "https://wincacademy.github.io/webpages/media/pexels-gabby-k-5384538.jpg",
       "categoryIds": [
-        3
+        "3"
       ],
       "location": "Shavasana Yoga School",
-      "startTime": "2023-03-09T06:00:00.000Z",
-      "endTime": "2023-03-09T07:00:00.000Z"
+      "startTime": "2024-07-03T15:19",
+      "endTime": "2024-07-03T15:19"
     },
     {
+      "id": "9d8d",
+      "title": "Mahadi",
+      "description": "Better",
+      "startTime": "2024-07-21T16:34",
+      "endTime": "2024-07-03T16:34",
       "categoryIds": [
-        "2"
-      ],
-      "description": "ss",
-      "id": "74ea"
-    },
-    {
-      "id": "87f3",
-      "title": "mouno",
-      "description": "better",
-      "startTime": "2024-07-18T13:17",
-      "endTime": "2024-07-18T13:17",
-      "categoryIds": [
-        2
+        "3"
       ],
       "image": "zz"
     }
