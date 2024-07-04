@@ -11,7 +11,7 @@ import {
   Th,
   Thead,
   Tr,
-  
+  Icon,
   Input,
   InputGroup,
   InputRightElement,
@@ -21,7 +21,7 @@ import {
   Center,
   useDisclosure,
 } from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
+import { SearchIcon ,AddIcon,ArrowDownIcon} from "@chakra-ui/icons";
 import CreateEventModul from "./CreateEventModul";
 
 const EventsPage = () => {
@@ -103,17 +103,20 @@ const EventsPage = () => {
         <div>
           <Heading>List of events</Heading>
           <div style={{ padding: "20vh" }}>
-            <Flex mb={4}>
+            <Flex mb={4} justify="space-between">
+              <Flex direction="column">
               <Button
                  onClick={() => setEventModal(true)}
                 bg="green.500"
                 color="white"
                 mb="1"
                 _hover={{ bg: "green.400" }}
+               width={"200px"}
               >
                 Add Event
+                <AddIcon ml={2} /> 
               </Button>
-              <InputGroup ml={4} width="300px">
+              <InputGroup width="200px">
                 <Input
                   placeholder="Search..."
                   value={search}
@@ -123,6 +126,7 @@ const EventsPage = () => {
                   <SearchIcon color="gray.300" />
                 </InputRightElement>
               </InputGroup>
+              </Flex>
               <Select
                 variant='filled'
                 onChange={handleCategoryChange}
