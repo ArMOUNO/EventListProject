@@ -11,7 +11,6 @@ import {
   Th,
   Thead,
   Tr,
-  Icon,
   Input,
   InputGroup,
   InputRightElement,
