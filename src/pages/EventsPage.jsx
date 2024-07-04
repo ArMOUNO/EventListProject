@@ -100,14 +100,18 @@ const EventsPage = () => {
                 </InputRightElement>
               </InputGroup>
               <div>
-              <p>Filter Categories</p>
+             <Flex ml={"3"}>
+                 
               <Stack spacing={3}>
-                <Select variant='filled' placeholder=''>
-                  <option value='option1'>sports </option>
-                  <option value='option2'>games </option>
-                  <option value='option3'>relaxation</option>
-                </Select>
+              <Select variant='filled' placeholder='Category'>
+
+                  <option value='option1' disabled>----------------</option>
+                  <option value='option2'>Sports</option>
+                  <option value='option3'>Games</option>
+                  <option value='option4'>Relaxation</option>
+             </Select>
               </Stack>
+             </Flex>
             </div>
             </Flex>
             
