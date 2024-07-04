@@ -29,18 +29,27 @@ const EventsPage = () => {
   const [events, setEvents] = useState([]);
   const [eventModal, setEventModal] = useState(false);
   const [search, setSearch] = useState('');
+  const [pageLoading, setPageLoading] = useState(true);
   const [loading, setLoading] = useState(false);
 
   const tableHead = ["Title", "Description", "Image", "Start Time", "End Time", "Categories"];
 
   const fetchEvents = () => {
+    setPageLoading(true);
     fetch("http://localhost:3000/events")
       .then((response) => response.json())
-      .then((data) => setEvents(data))
-      .catch((error) => console.error("Error fetching data:", error));
+      .then((data) => {
+        setEvents(data);
+        setPageLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setPageLoading(false);
+      });
   };
 
   useEffect(() => {
+
     fetchEvents();
   }, []);
 
@@ -53,7 +62,7 @@ const EventsPage = () => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, 1000);
   };
 
   const filteredEvents = events.filter((event) =>
@@ -62,74 +71,92 @@ const EventsPage = () => {
 
   return (
     <div>
-      <Heading>List of events</Heading>
-      <div style={{ padding: "20vh" }}>
-        <Flex mb={4}>
-          <Button
-            onClick={() => setEventModal(true)}
-            bg="green.500"
-            color="white"
-            mb="1"
-            _hover={{ bg: "green.400" }}
-          >
-            Add Event
-          </Button>
-          <InputGroup ml={4} width="300px">
-            <Input
-              placeholder="Search..."
-              value={search}
-              onChange={handleSearchChange}
-            />
-            <InputRightElement pointerEvents="none">
-              <SearchIcon color="gray.300" />
-            </InputRightElement>
-          </InputGroup>
-        </Flex>
-        <TableContainer style={{ border: "1px solid black" }}>
-          <Table variant="striped" colorScheme="teal">
-            <Thead>
-              <Tr>
-                {tableHead.map((item, index) => (
-                  <Th key={index}>{item}</Th>
-                ))}
-              </Tr>
-            </Thead>
-            <Tbody>
-              {loading ? (
-                <Tr>
-                  <Td colSpan={tableHead.length}>
-                    <Center>
-                      <Spinner size="lg" />
-                      <Box ml={2}>Loading...</Box>
-                    </Center>
-                  </Td>
-                </Tr>
-              ) : (
-                filteredEvents.map((item) => (
-                  <Tr key={item.id} onClick={() => handleRowClick(item.id)} _hover={{ cursor: "pointer" }}>
-                    <Td>{item?.title}</Td>
-                    <Td>{item?.description}</Td>
-                    <Td>
-                      <Image boxSize="60px" objectFit="cover" src={item?.image} alt="example-image" />
-                    </Td>
-                    <Td>{item?.startTime}</Td>
-                    <Td>{item?.endTime}</Td>
-                    <Td>
-                      {item?.categoryIds?.map((categoryId, index) => (
-                        <span key={index}>
-                          {categoryId}
-                          {index < item.categoryIds.length - 1 ? ", " : ""}
-                        </span>
-                      ))}
-                    </Td>
+      {pageLoading ? (
+        <Center position="fixed" top="0" left="0" width="100%" height="100%" bg="rgba(255, 255, 255, 0.8)" zIndex="1000">
+          <Spinner color='blue.500' size="xl" />
+        </Center>
+      ) : (
+        <div>
+          <Heading>List of events</Heading>
+          <div style={{ padding: "20vh" }}>
+            <Flex mb={4}>
+              <Button
+                onClick={() => setEventModal(true)}
+                bg="green.500"
+                color="white"
+                mb="1"
+                _hover={{ bg: "green.400" }}
+              >
+                Add Event
+              </Button>
+              <InputGroup ml={4} width="300px">
+                <Input
+                  placeholder="Search..."
+                  value={search}
+                  onChange={handleSearchChange}
+                />
+                <InputRightElement pointerEvents="none">
+                  <SearchIcon color="gray.300" />
+                </InputRightElement>
+              </InputGroup>
+              <div>
+              <p>Filter Categories</p>
+              <Stack spacing={3}>
+                <Select variant='filled' placeholder=''>
+                  <option value='option1'>sports </option>
+                  <option value='option2'>games </option>
+                  <option value='option3'>relaxation</option>
+                </Select>
+              </Stack>
+            </div>
+            </Flex>
+            
+            <TableContainer style={{ border: "1px solid black" }}>
+              <Table variant="striped" colorScheme="teal">
+                <Thead>
+                  <Tr>
+                    {tableHead.map((item, index) => (
+                      <Th key={index}>{item}</Th>
+                    ))}
                   </Tr>
-                ))
-              )}
-            </Tbody>
-          </Table>
-        </TableContainer>
-        {eventModal && <CreateEventModul eventModal={eventModal} setEventModal={setEventModal} fetchEvents={fetchEvents} />}
-      </div>
+                </Thead>
+                <Tbody>
+                  {loading ? (
+                    <Tr>
+                      <Td colSpan={tableHead.length}>
+                        <Center>
+                          <Spinner size="lg" />
+                          <Box ml={2}>Loading...</Box>
+                        </Center>
+                      </Td>
+                    </Tr>
+                  ) : (
+                    filteredEvents.map((item) => (
+                      <Tr key={item.id} onClick={() => handleRowClick(item.id)} _hover={{ cursor: "pointer" }}>
+                        <Td>{item?.title}</Td>
+                        <Td>{item?.description}</Td>
+                        <Td>
+                          <Image boxSize="60px" objectFit="cover" src={item?.image} alt="example-image" />
+                        </Td>
+                        <Td>{item?.startTime}</Td>
+                        <Td>{item?.endTime}</Td>
+                        <Td>
+                          {item?.categoryIds?.map((categoryId, index) => (
+                            <span key={index}>
+                              {categoryId}
+                              {index < item.categoryIds.length - 1 ? ", " : ""}
+                            </span>
+                          ))}
+                        </Td>
+                      </Tr>
+                    ))
+                  )}
+                </Tbody>
+              </Table>
+            </TableContainer>
+            {eventModal && <CreateEventModul eventModal={eventModal} setEventModal={setEventModal} fetchEvents={fetchEvents} />}
+          </div>
+        </div>)}
     </div>
   );
 };
