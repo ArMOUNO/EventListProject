@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -10,46 +11,45 @@ import {
   Th,
   Thead,
   Tr,
-  Box,
+  
   Input,
   InputGroup,
   InputRightElement,
   Flex,
   Select,
-  Stack,
   Spinner,
-  Center
+  Center,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
-import React, { useEffect, useState } from "react";
 import CreateEventModul from "./CreateEventModul";
 
 const EventsPage = () => {
   const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [eventModal, setEventModal] = useState(false);
+  const [filteredEvents, setFilteredEvents] = useState([]);
   const [search, setSearch] = useState('');
   const [pageLoading, setPageLoading] = useState(true);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); 
+  const [selectedCategory, setSelectedCategory] = useState('');
 
   const tableHead = ["Title", "Description", "Image", "Start Time", "End Time", "Categories"];
 
-  const fetchEvents = () => {
+  const fetchEvents = async () => {
     setPageLoading(true);
-    fetch("http://localhost:3000/events")
-      .then((response) => response.json())
-      .then((data) => {
-        setEvents(data);
-        setPageLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-        setPageLoading(false);
-      });
+    try {
+      const response = await fetch("http://localhost:3000/events");
+      const data = await response.json();
+      setEvents(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setPageLoading(false);
+    }
   };
 
   useEffect(() => {
-
     fetchEvents();
   }, []);
 
@@ -59,15 +59,39 @@ const EventsPage = () => {
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
-    setLoading(true);
+    setLoading(true); 
     setTimeout(() => {
-      setLoading(false);
-    }, 1000);
+      setLoading(false); 
+    },3000);
   };
 
-  const filteredEvents = events.filter((event) =>
-    event.title.toLowerCase().includes(search.toLowerCase())
-  );
+  const filterEvents = () => {
+    let filtered = events;
+    if (search) {
+      filtered = filtered.filter((event) =>
+        event.title.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    if (selectedCategory) {
+      filtered = filtered.filter((event) =>
+        event.categoryIds.includes(selectedCategory)
+      );
+    }
+
+    setFilteredEvents(filtered);
+  };
+
+  useEffect(() => {
+    filterEvents();
+  }, [search, selectedCategory, events]);
+
+  const handleCategoryChange = (e) => {
+    setSelectedCategory(e.target.value);
+    setLoading(true); 
+    setTimeout(() => {
+      setLoading(false); 
+    }, 1000);
+  };
 
   return (
     <div>
@@ -81,7 +105,7 @@ const EventsPage = () => {
           <div style={{ padding: "20vh" }}>
             <Flex mb={4}>
               <Button
-                onClick={() => setEventModal(true)}
+                 onClick={() => setEventModal(true)}
                 bg="green.500"
                 color="white"
                 mb="1"
@@ -99,23 +123,26 @@ const EventsPage = () => {
                   <SearchIcon color="gray.300" />
                 </InputRightElement>
               </InputGroup>
-              <div>
-             <Flex ml={"3"}>
-                 
-              <Stack spacing={3}>
-              <Select variant='filled' placeholder='Category'>
-
-                  <option value='option1' disabled>----------------</option>
-                  <option value='option2'>Sports</option>
-                  <option value='option3'>Games</option>
-                  <option value='option4'>Relaxation</option>
-             </Select>
-              </Stack>
-             </Flex>
-            </div>
+              <Select
+                variant='filled'
+                onChange={handleCategoryChange}
+                value={selectedCategory}
+                ml={4}
+                width={"-moz-max-content"}
+              >
+                <option value="">All Categories</option>
+                <option value="1">Sports</option>
+                <option value="2">Games</option>
+                <option value="3">Relaxation</option>
+              </Select>
             </Flex>
             
-            <TableContainer style={{ border: "1px solid black" }}>
+            {loading ? ( 
+              <Center>
+                <Spinner color='red.500' size="xl" />
+              </Center>
+            ):
+            (<TableContainer style={{ border: "1px solid black" }}>
               <Table variant="striped" colorScheme="teal">
                 <Thead>
                   <Tr>
@@ -125,27 +152,24 @@ const EventsPage = () => {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {loading ? (
+                  {filteredEvents.length === 0 ? (
                     <Tr>
                       <Td colSpan={tableHead.length}>
-                        <Center>
-                          <Spinner size="lg" />
-                          <Box ml={2}>Loading...</Box>
-                        </Center>
+                        <Center>No events found.</Center>
                       </Td>
                     </Tr>
                   ) : (
                     filteredEvents.map((item) => (
                       <Tr key={item.id} onClick={() => handleRowClick(item.id)} _hover={{ cursor: "pointer" }}>
-                        <Td>{item?.title}</Td>
-                        <Td>{item?.description}</Td>
+                        <Td>{item.title}</Td>
+                        <Td>{item.description}</Td>
                         <Td>
-                          <Image boxSize="60px" objectFit="cover" src={item?.image} alt="example-image" />
+                          <Image boxSize="60px" objectFit="cover" src={item.image} alt="Event Image" />
                         </Td>
-                        <Td>{item?.startTime}</Td>
-                        <Td>{item?.endTime}</Td>
+                        <Td>{item.startTime}</Td>
+                        <Td>{item.endTime}</Td>
                         <Td>
-                          {item?.categoryIds?.map((categoryId, index) => (
+                          {item.categoryIds.map((categoryId, index) => (
                             <span key={index}>
                               {categoryId}
                               {index < item.categoryIds.length - 1 ? ", " : ""}
@@ -157,10 +181,12 @@ const EventsPage = () => {
                   )}
                 </Tbody>
               </Table>
-            </TableContainer>
-            {eventModal && <CreateEventModul eventModal={eventModal} setEventModal={setEventModal} fetchEvents={fetchEvents} />}
+            </TableContainer>)
+          }
+          {eventModal && <CreateEventModul eventModal={eventModal} setEventModal={setEventModal} fetchEvents={fetchEvents} />}
           </div>
-        </div>)}
+        </div>
+      )}
     </div>
   );
 };
