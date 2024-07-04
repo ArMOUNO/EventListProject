@@ -21,7 +21,8 @@ import {
   ModalHeader, 
   ModalFooter,
   ModalBody, 
-  ModalCloseButton
+  ModalCloseButton,
+  Spinner
 } from "@chakra-ui/react";
 import ReusableForm from "../components/ReusableForm";
 
@@ -34,8 +35,10 @@ const EventPage = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [pageLoading, setPageLoading] = useState(false);
 
   const fetchEvent = async () => {
+    setPageLoading(true);
     try {
       const response = await fetch(`http://localhost:3000/events/${eventId}`);
       const data = await response.json();
@@ -43,6 +46,8 @@ const EventPage = () => {
       reset(data);
     } catch (error) {
       console.error("Error fetching event details:", error);
+    }finally {
+      setPageLoading(false);
     }
   };
 
@@ -58,6 +63,7 @@ const EventPage = () => {
 
   useEffect(() => {
     fetchEvent();
+    
   }, [eventId]);
 
   const handleEdit = async () => {
@@ -142,6 +148,13 @@ const EventPage = () => {
   };
 
   return (
+    <div>
+    {pageLoading ? (
+      <Center position="fixed" top="0" left="0" width="100%" height="100%" bg="rgba(255, 255, 255, 0.8)" zIndex="1000">
+        <Spinner color='blue.500' size="xl" />
+      </Center>
+    ) : (
+    <div>
     <Center height="80vh">
       <Box
         maxW="lg"
@@ -234,6 +247,8 @@ const EventPage = () => {
         </ModalContent>
       </Modal>
     </Center>
+    </div>)}
+    </div>
   );
 };
 
