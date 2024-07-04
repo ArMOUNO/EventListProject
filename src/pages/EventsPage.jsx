@@ -10,11 +10,15 @@ import {
   Th,
   Thead,
   Tr,
-  Box,Input,
+  Box,
+  Input,
   InputGroup,
   InputRightElement,
   Flex,
-  
+  Select,
+  Stack,
+  Spinner,
+  Center
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import React, { useEffect, useState } from "react";
@@ -24,6 +28,8 @@ const EventsPage = () => {
   const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [eventModal, setEventModal] = useState(false);
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const tableHead = ["Title", "Description", "Image", "Start Time", "End Time", "Categories"];
 
@@ -42,37 +48,43 @@ const EventsPage = () => {
     navigate(`/event/${eventId}`);
   };
 
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  };
+
+  const filteredEvents = events.filter((event) =>
+    event.title.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div>
       <Heading>List of events</Heading>
       <div style={{ padding: "20vh" }}>
-        <div>
-          
-        </div>
-        
-         <Flex >
-         <Flex mr={"1"}>
-         <Button
-          onClick={() => setEventModal(true)}
-          bg="green.500"
-          color="white"
-          mb="1"
-          _hover={{ bg: "green.400" }}
-        >
-          Add Event
-        </Button>
-         </Flex>
-        {/* Searchbar */}
-         <InputGroup width="300px">
+        <Flex mb={4}>
+          <Button
+            onClick={() => setEventModal(true)}
+            bg="green.500"
+            color="white"
+            mb="1"
+            _hover={{ bg: "green.400" }}
+          >
+            Add Event
+          </Button>
+          <InputGroup ml={4} width="300px">
             <Input
               placeholder="Search..."
-             
-             />
-            <InputRightElement marginLeft={"2"} pointerEvents="none">
+              value={search}
+              onChange={handleSearchChange}
+            />
+            <InputRightElement pointerEvents="none">
               <SearchIcon color="gray.300" />
             </InputRightElement>
           </InputGroup>
-         </Flex>
+        </Flex>
         <TableContainer style={{ border: "1px solid black" }}>
           <Table variant="striped" colorScheme="teal">
             <Thead>
@@ -83,25 +95,36 @@ const EventsPage = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {events?.map((item) => (
-                <Tr key={item.id} onClick={() => handleRowClick(item.id)} _hover={{ cursor: "pointer" }}>
-                  <Td>{item?.title}</Td>
-                  <Td>{item?.description}</Td>
-                  <Td>
-                    <Image boxSize="60px" objectFit="cover" src={item?.image} alt="example-image" />
-                  </Td>
-                  <Td>{item?.startTime}</Td>
-                  <Td>{item?.endTime}</Td>
-                  <Td>
-                    {item?.categoryIds?.map((categoryId, index) => (
-                      <span key={index}>
-                        {categoryId}
-                        {index < item.categoryIds.length - 1 ? ", " : ""}
-                      </span>
-                    ))}
+              {loading ? (
+                <Tr>
+                  <Td colSpan={tableHead.length}>
+                    <Center>
+                      <Spinner size="lg" />
+                      <Box ml={2}>Loading...</Box>
+                    </Center>
                   </Td>
                 </Tr>
-              ))}
+              ) : (
+                filteredEvents.map((item) => (
+                  <Tr key={item.id} onClick={() => handleRowClick(item.id)} _hover={{ cursor: "pointer" }}>
+                    <Td>{item?.title}</Td>
+                    <Td>{item?.description}</Td>
+                    <Td>
+                      <Image boxSize="60px" objectFit="cover" src={item?.image} alt="example-image" />
+                    </Td>
+                    <Td>{item?.startTime}</Td>
+                    <Td>{item?.endTime}</Td>
+                    <Td>
+                      {item?.categoryIds?.map((categoryId, index) => (
+                        <span key={index}>
+                          {categoryId}
+                          {index < item.categoryIds.length - 1 ? ", " : ""}
+                        </span>
+                      ))}
+                    </Td>
+                  </Tr>
+                ))
+              )}
             </Tbody>
           </Table>
         </TableContainer>
