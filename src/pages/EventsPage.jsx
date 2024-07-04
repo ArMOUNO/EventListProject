@@ -19,9 +19,9 @@ import {
   Select,
   Spinner,
   Center,
-  useDisclosure,
+ 
 } from "@chakra-ui/react";
-import { SearchIcon ,AddIcon,ArrowDownIcon} from "@chakra-ui/icons";
+import { SearchIcon ,AddIcon} from "@chakra-ui/icons";
 import CreateEventModul from "./CreateEventModul";
 
 const EventsPage = () => {
@@ -127,18 +127,20 @@ const EventsPage = () => {
                 </InputRightElement>
               </InputGroup>
               </Flex>
-              <Select
-                variant='filled'
-                onChange={handleCategoryChange}
-                value={selectedCategory}
-                ml={4}
-                width={"-moz-max-content"}
-              >
-                <option value="">All Categories</option>
-                <option value="1">Sports</option>
-                <option value="2">Games</option>
-                <option value="3">Relaxation</option>
-              </Select>
+               <div  style={{ paddingTop: "40px" }}>
+                  <Select 
+                    variant='filled'
+                    onChange={handleCategoryChange}
+                    value={selectedCategory}
+                   
+                    width={"-moz-max-content"}
+                  >
+                    <option value="">All Categories</option>
+                    <option value="1">Sports</option>
+                    <option value="2">Games</option>
+                    <option value="3">Relaxation</option>
+                  </Select>
+               </div>
             </Flex>
             
             {loading ? ( 
