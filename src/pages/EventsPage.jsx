@@ -11,7 +11,6 @@ import {
   Th,
   Thead,
   Tr,
-  
   Input,
   InputGroup,
   InputRightElement,
@@ -19,9 +18,9 @@ import {
   Select,
   Spinner,
   Center,
-  useDisclosure,
+ 
 } from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
+import { SearchIcon ,AddIcon} from "@chakra-ui/icons";
 import CreateEventModul from "./CreateEventModul";
 
 const EventsPage = () => {
@@ -103,17 +102,20 @@ const EventsPage = () => {
         <div>
           <Heading>List of events</Heading>
           <div style={{ padding: "20vh" }}>
-            <Flex mb={4}>
+            <Flex mb={4} justify="space-between">
+              <Flex direction="column">
               <Button
                  onClick={() => setEventModal(true)}
                 bg="green.500"
                 color="white"
                 mb="1"
                 _hover={{ bg: "green.400" }}
+               width={"200px"}
               >
                 Add Event
+                <AddIcon ml={2} /> 
               </Button>
-              <InputGroup ml={4} width="300px">
+              <InputGroup width="200px">
                 <Input
                   placeholder="Search..."
                   value={search}
@@ -123,18 +125,21 @@ const EventsPage = () => {
                   <SearchIcon color="gray.300" />
                 </InputRightElement>
               </InputGroup>
-              <Select
-                variant='filled'
-                onChange={handleCategoryChange}
-                value={selectedCategory}
-                ml={4}
-                width={"-moz-max-content"}
-              >
-                <option value="">All Categories</option>
-                <option value="1">Sports</option>
-                <option value="2">Games</option>
-                <option value="3">Relaxation</option>
-              </Select>
+              </Flex>
+               <div  style={{ paddingTop: "40px" }}>
+                  <Select 
+                    variant='filled'
+                    onChange={handleCategoryChange}
+                    value={selectedCategory}
+                   
+                    width={"-moz-max-content"}
+                  >
+                    <option value="">All Categories</option>
+                    <option value="1">Sports</option>
+                    <option value="2">Games</option>
+                    <option value="3">Relaxation</option>
+                  </Select>
+               </div>
             </Flex>
             
             {loading ? ( 

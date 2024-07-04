@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
-  Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter,
-  ModalBody, ModalCloseButton
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import ReusableForm from '../components/ReusableForm';
 
-const CreateEventModul = ({ PopUpname, eventModal, setEventModal,fetchEvents }) => {
+const CreateEventModal = ({ PopUpname, eventModal, setEventModal, fetchEvents }) => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const [categories, setCategories] = useState([]);
-
   useEffect(() => {
     fetch("http://localhost:3000/categories")
       .then((response) => response.json())
@@ -19,20 +24,26 @@ const CreateEventModul = ({ PopUpname, eventModal, setEventModal,fetchEvents }) 
 
   const onSubmit = async (data) => {
     try {
-      data.categoryIds = data.categoryIds.split(',').map(Number);
+      const categoryIds = data.categoryIds ? data.categoryIds.split(',') : [];  
+      const updatedData = {
+        ...data,
+        categoryIds, 
+      };
+
       const response = await fetch('http://localhost:3000/events', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(updatedData),
       });
-    
+
       if (response.ok) {
         console.log('Event saved successfully!');
         reset();
         setEventModal(false);
-        fetchEvents();
+
+        fetchEvents(); 
       } else {
         console.error('Failed to save event:', response.statusText);
       }
@@ -56,12 +67,12 @@ const CreateEventModul = ({ PopUpname, eventModal, setEventModal,fetchEvents }) 
               label4="End Time"
               label5="Category"
               label6="Image"
-              name1='title'
-              name2='description'
-              name3='startTime'
-              name4='endTime'
-              name5='categoryIds'
-              name6='image'
+              name1="title"
+              name2="description"
+              name3="startTime"
+              name4="endTime"
+              name5="categoryIds"
+              name6="image"
               type1="text"
               type2="text"
               type3="datetime-local"
@@ -78,12 +89,14 @@ const CreateEventModul = ({ PopUpname, eventModal, setEventModal,fetchEvents }) 
             <Button colorScheme="red" mr={3} onClick={() => setEventModal(false)}>
               Close
             </Button>
-            <Button onClick={handleSubmit(onSubmit)} colorScheme="green">Save</Button>
+            <Button onClick={handleSubmit(onSubmit)} colorScheme="green">
+              Save
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
     </>
   );
-}
+};
 
-export default CreateEventModul;
+export default CreateEventModal;

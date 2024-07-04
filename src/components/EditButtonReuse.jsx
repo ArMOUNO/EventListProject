@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button } from '@chakra-ui/react';
+import {  EditIcon } from "@chakra-ui/icons";
 const EditButtonReuse = ({onEdit}) => {
  
   return (
@@ -13,10 +14,10 @@ const EditButtonReuse = ({onEdit}) => {
       borderRadius="sm"
       _hover={{ bg: "blue.400" }}
       onClick={onEdit}
-      width="60px"
+      width="70px"
       height="30px"
     >
-      Edit
+      Edit <EditIcon ml={1} /> 
     </Button>
     </div>
   )
